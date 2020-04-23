@@ -33,17 +33,29 @@ def main(file, output):
     )
     graph = graph.subgraph(selected)
 
-    max_cluster = max(graph.biconnected_components().sizes())
-    for i in graph.biconnected_components():
-        if len(i) == max_cluster:
-            cluster_1 = graph.subgraph(i)
+    # max_cluster = max(graph.biconnected_components().sizes())
+    # for i in graph.biconnected_components():
+    #     if len(i) == max_cluster:
+    #         cluster_biconnected = graph.subgraph(i)
+
+    graph_undirected = graph.as_undirected()
+    max_blondel = max(
+        graph_undirected.community_multilevel(weights=None, return_levels=False).sizes()
+    )
+    for cluster in graph_undirected.community_multilevel(
+        weights=None, return_levels=False
+    ):
+        if len(cluster) == max_blondel:
+            cluster_blondel = graph_undirected.subgraph(cluster)
 
     features = pd.DataFrame(index=[file])
-    for i in graph, cluster_1:
+    for i in graph, cluster_blondel:
         if i == graph:
             j = "Complet"
+        # elif i == cluster_biconnected:
+        #     j = "Biconnected_C"
         else:
-            j = "Cluster"
+            j = "Blondel_C"
         nodes = i.vcount()
         edges = i.ecount()
         features["Nodes " + j] = nodes

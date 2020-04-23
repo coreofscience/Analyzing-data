@@ -11,7 +11,6 @@ def main(path):
     """ Aplica main.py a cada uno de los archivos .txt """
     files = glob(os.path.join(path, "*.txt"))
     for file in tqdm(files):
-        print(file)
         output = file.replace(".txt", ".csv")
         os.system(f"python main.py  -o {output} {file}")
 
